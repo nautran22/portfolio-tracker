@@ -1,0 +1,1873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Property Portfolio — Infrastructure-Led Research Framework</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0e0f11;
+    --surface: #16181c;
+    --surface2: #1e2026;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --text: #e8e6e0;
+    --muted: #7a7870;
+    --accent: #c8f060;
+    --accent2: #60c8f0;
+    --accent3: #f060a8;
+    --warn: #f0a860;
+    --danger: #f06060;
+    --success: #60d4a0;
+    --font-display: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+    --radius: 10px;
+    --radius-lg: 16px;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* NAV */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(14,15,17,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    height: 52px;
+  }
+  .nav-brand {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .nav-tabs {
+    display: flex;
+    gap: 0;
+    flex: 1;
+    overflow-x: auto;
+  }
+  .nav-tab {
+    padding: 0 14px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: color 0.15s, border-color 0.15s;
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    font-family: var(--font-body);
+  }
+  .nav-tab:hover { color: var(--text); }
+  .nav-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .nav-actions { display: flex; gap: 8px; margin-left: auto; }
+  .btn {
+    padding: 6px 14px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border2);
+    background: var(--surface2);
+    color: var(--text);
+    font-size: 12px;
+    font-family: var(--font-body);
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .btn:hover { background: #2a2d35; border-color: rgba(255,255,255,0.2); }
+  .btn-primary {
+    background: var(--accent);
+    color: #0e0f11;
+    border-color: var(--accent);
+    font-weight: 500;
+  }
+  .btn-primary:hover { background: #d4f57a; }
+
+  /* PAGES */
+  .page { display: none; padding: 2rem; max-width: 1200px; margin: 0 auto; }
+  .page.active { display: block; }
+
+  /* SECTION HEADERS */
+  .page-header { margin-bottom: 2rem; }
+  .page-title {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .page-sub { color: var(--muted); font-size: 13px; }
+
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem 1.5rem;
+  }
+  .card-title {
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.75rem;
+  }
+
+  /* GRID LAYOUTS */
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  @media (max-width: 900px) {
+    .grid-4 { grid-template-columns: repeat(2, 1fr); }
+    .grid-3 { grid-template-columns: repeat(2, 1fr); }
+    .grid-2 { grid-template-columns: 1fr; }
+  }
+
+  /* STAT CARDS */
+  .stat { padding: 1.25rem 1.5rem; }
+  .stat-label { font-size: 11px; color: var(--muted); margin-bottom: 6px; letter-spacing: 0.05em; text-transform: uppercase; }
+  .stat-value { font-family: var(--font-display); font-size: 28px; font-weight: 700; line-height: 1; }
+  .stat-delta { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .delta-up { color: var(--success); }
+  .delta-down { color: var(--danger); }
+
+  /* SCORE RINGS */
+  .score-ring-wrap { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .score-ring-label { font-size: 11px; color: var(--muted); text-align: center; letter-spacing: 0.05em; text-transform: uppercase; }
+  svg.ring { transform: rotate(-90deg); }
+  .ring-bg { fill: none; stroke: var(--surface2); stroke-width: 6; }
+  .ring-fill { fill: none; stroke-width: 6; stroke-linecap: round; transition: stroke-dasharray 0.6s ease; }
+  .ring-text { font-family: var(--font-display); font-size: 16px; font-weight: 700; fill: var(--text); }
+  .ring-sub { font-size: 9px; fill: var(--muted); }
+
+  /* FILTER SCORES */
+  .filter-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .filter-row:last-child { border-bottom: none; }
+  .filter-name { flex: 1; font-size: 13px; }
+  .filter-bar-wrap { width: 120px; height: 4px; background: var(--surface2); border-radius: 2px; overflow: hidden; }
+  .filter-bar { height: 100%; border-radius: 2px; transition: width 0.5s ease; }
+  .filter-score-num { font-family: var(--font-mono); font-size: 12px; color: var(--muted); width: 28px; text-align: right; }
+  .filter-pass { width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; }
+  .pass-yes { background: rgba(96,212,160,0.15); color: var(--success); }
+  .pass-no { background: rgba(240,96,96,0.15); color: var(--danger); }
+  .pass-warn { background: rgba(240,168,96,0.15); color: var(--warn); }
+
+  /* BADGE */
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+  }
+  .badge-go { background: rgba(96,212,160,0.15); color: var(--success); border: 1px solid rgba(96,212,160,0.25); }
+  .badge-warn { background: rgba(240,168,96,0.15); color: var(--warn); border: 1px solid rgba(240,168,96,0.25); }
+  .badge-stop { background: rgba(240,96,96,0.15); color: var(--danger); border: 1px solid rgba(240,96,96,0.25); }
+  .badge-info { background: rgba(96,200,240,0.15); color: var(--accent2); border: 1px solid rgba(96,200,240,0.25); }
+
+  /* FORM ELEMENTS */
+  .form-group { margin-bottom: 1rem; }
+  .form-label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; letter-spacing: 0.04em; text-transform: uppercase; }
+  .form-input, .form-select, .form-textarea {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 14px;
+    padding: 8px 12px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .form-input:focus, .form-select:focus, .form-textarea:focus {
+    border-color: var(--accent);
+  }
+  .form-select option { background: #1e2026; }
+  .form-textarea { resize: vertical; min-height: 80px; }
+  .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+  /* RANGE SLIDER */
+  .slider-wrap { display: flex; align-items: center; gap: 12px; }
+  input[type=range] {
+    flex: 1;
+    -webkit-appearance: none;
+    height: 3px;
+    background: var(--surface2);
+    border-radius: 2px;
+    outline: none;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+  }
+  .slider-val { font-family: var(--font-mono); font-size: 13px; color: var(--accent); min-width: 24px; text-align: right; }
+
+  /* PROPERTY TABLE */
+  .prop-table { width: 100%; border-collapse: collapse; }
+  .prop-table th {
+    text-align: left;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  .prop-table td {
+    padding: 12px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    vertical-align: middle;
+  }
+  .prop-table tr:last-child td { border-bottom: none; }
+  .prop-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .prop-name { font-weight: 500; color: var(--text); }
+  .prop-suburb { font-size: 12px; color: var(--muted); }
+  .score-pill {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .score-high { background: rgba(96,212,160,0.15); color: var(--success); }
+  .score-mid { background: rgba(240,168,96,0.15); color: var(--warn); }
+  .score-low { background: rgba(240,96,96,0.15); color: var(--danger); }
+
+  /* ACTION BUTTONS */
+  .action-btn {
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: none;
+    color: var(--muted);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: var(--font-body);
+  }
+  .action-btn:hover { border-color: var(--border2); color: var(--text); background: var(--surface2); }
+  .action-btn.delete:hover { border-color: rgba(240,96,96,0.4); color: var(--danger); }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    width: 100%;
+    max-width: 680px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+  }
+  .modal-title {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+  }
+  .modal-close {
+    position: absolute;
+    top: 1.25rem;
+    right: 1.25rem;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--muted);
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-close:hover { color: var(--text); border-color: var(--border2); }
+
+  /* DIVIDER */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+
+  /* FRAMEWORK CHECKLIST */
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .check-item:last-child { border-bottom: none; }
+  .check-num {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--surface2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .check-body { flex: 1; }
+  .check-label { font-size: 13px; font-weight: 500; margin-bottom: 2px; }
+  .check-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  /* CHART PLACEHOLDER */
+  .chart-area {
+    background: var(--surface2);
+    border-radius: var(--radius);
+    height: 180px;
+    display: flex;
+    align-items: flex-end;
+    padding: 12px;
+    gap: 6px;
+    position: relative;
+    overflow: hidden;
+  }
+  .bar-group { display: flex; align-items: flex-end; gap: 2px; flex: 1; }
+  .bar {
+    flex: 1;
+    border-radius: 3px 3px 0 0;
+    transition: opacity 0.2s;
+    min-width: 6px;
+  }
+  .bar:hover { opacity: 0.75; }
+  .chart-label {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    padding: 0 12px 4px;
+    gap: 6px;
+  }
+  .chart-x-label { flex: 1; text-align: center; font-size: 10px; color: var(--muted); font-family: var(--font-mono); }
+
+  /* RADAR-LIKE SCORE DISPLAY */
+  .radar-scores { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .radar-item { display: flex; flex-direction: column; gap: 4px; }
+  .radar-label { font-size: 11px; color: var(--muted); }
+  .radar-bar { height: 3px; background: var(--surface2); border-radius: 2px; overflow: hidden; }
+  .radar-fill { height: 100%; border-radius: 2px; }
+
+  /* EMPTY STATE */
+  .empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: var(--muted);
+  }
+  .empty-state-icon { font-size: 32px; margin-bottom: 12px; opacity: 0.5; }
+  .empty-state-title { font-family: var(--font-display); font-size: 16px; margin-bottom: 6px; color: var(--text); }
+  .empty-state-sub { font-size: 13px; }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+  /* SECTION SPACING */
+  .section { margin-bottom: 1.5rem; }
+  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+  .section-title { font-family: var(--font-display); font-size: 14px; font-weight: 600; }
+
+  /* TOOLTIP TAG */
+  .tag {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 4px;
+    font-size: 11px;
+    background: var(--surface2);
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+
+  /* NOTES AREA */
+  .notes-block {
+    background: var(--surface2);
+    border-radius: var(--radius);
+    padding: 12px;
+    font-size: 13px;
+    color: var(--muted);
+    border-left: 2px solid var(--accent);
+    line-height: 1.6;
+  }
+
+  .accent { color: var(--accent); }
+  .accent2 { color: var(--accent2); }
+  .mono { font-family: var(--font-mono); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-brand">Portfolio OS</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('dashboard')">Dashboard</button>
+    <button class="nav-tab" onclick="showPage('add')">+ Add Property</button>
+    <button class="nav-tab" onclick="showPage('properties')">Properties</button>
+    <button class="nav-tab" onclick="showPage('analytics')">Analytics</button>
+    <button class="nav-tab" onclick="showPage('infrastructure')">Infrastructure</button>
+    <button class="nav-tab" onclick="showPage('framework')">Framework</button>
+    <button class="nav-tab" onclick="showPage('sources')">Sources</button>
+  </div>
+  <div class="nav-actions">
+    <button class="btn" onclick="exportData()">Export JSON</button>
+    <button class="btn" onclick="importData()">Import</button>
+  </div>
+</nav>
+
+<!-- DASHBOARD -->
+<div class="page active" id="page-dashboard">
+  <div class="page-header">
+    <div class="page-title">Portfolio Dashboard</div>
+    <div class="page-sub">Infrastructure-led acquisition framework — WA &amp; Melbourne markets</div>
+  </div>
+
+  <div class="grid-4 section" id="stat-cards">
+    <div class="card stat">
+      <div class="stat-label">Properties tracked</div>
+      <div class="stat-value accent" id="stat-total">0</div>
+      <div class="stat-delta">Across all markets</div>
+    </div>
+    <div class="card stat">
+      <div class="stat-label">Avg infrastructure score</div>
+      <div class="stat-value" id="stat-infra-avg">—</div>
+      <div class="stat-delta">Out of 100</div>
+    </div>
+    <div class="card stat">
+      <div class="stat-label">Shortlisted</div>
+      <div class="stat-value accent" id="stat-shortlisted">0</div>
+      <div class="stat-delta" id="stat-shortlist-pct">— % of tracked</div>
+    </div>
+    <div class="card stat">
+      <div class="stat-label">Avg median price</div>
+      <div class="stat-value" id="stat-avg-price">—</div>
+      <div class="stat-delta">Across tracked suburbs</div>
+    </div>
+  </div>
+
+  <div class="grid-2 section">
+    <div class="card">
+      <div class="card-title">Score distribution</div>
+      <div class="chart-area" id="score-chart">
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
+          <span style="color:var(--muted);font-size:13px;">Add properties to see distribution</span>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Market breakdown</div>
+      <div id="market-breakdown" style="padding-top:8px;">
+        <div class="empty-state" style="padding:1.5rem;">
+          <div class="empty-state-sub">No data yet</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card section">
+    <div class="card-title">Top scored properties</div>
+    <div id="top-properties">
+      <div class="empty-state">
+        <div class="empty-state-icon">⬡</div>
+        <div class="empty-state-title">No properties tracked yet</div>
+        <div class="empty-state-sub">Use the <strong>Add Property</strong> tab to begin researching</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADD PROPERTY -->
+<div class="page" id="page-add">
+  <div class="page-header">
+    <div class="page-title">Research a property</div>
+    <div class="page-sub">Score against the infrastructure-led framework. Each layer is weighted by its predictive value for capital growth.</div>
+  </div>
+
+  <div class="grid-2">
+    <!-- LEFT COL: PROPERTY DETAILS -->
+    <div>
+      <div class="card section">
+        <div class="card-title">Property details</div>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label">Suburb</label>
+            <input type="text" class="form-input" id="f-suburb" placeholder="e.g. Armadale">
+          </div>
+          <div class="form-group">
+            <label class="form-label">State</label>
+            <select class="form-select" id="f-state">
+              <option value="WA">Western Australia</option>
+              <option value="VIC">Victoria</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label">Median price ($)</label>
+            <input type="number" class="form-input" id="f-price" placeholder="605000">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Property type</label>
+            <select class="form-select" id="f-type">
+              <option value="house">House</option>
+              <option value="unit">Unit / Apartment</option>
+              <option value="townhouse">Townhouse</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-grid-3">
+          <div class="form-group">
+            <label class="form-label">Annual growth (%)</label>
+            <input type="number" class="form-input" id="f-growth" placeholder="10.1" step="0.1">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Gross yield (%)</label>
+            <input type="number" class="form-input" id="f-yield" placeholder="5.0" step="0.1">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Vacancy rate (%)</label>
+            <input type="number" class="form-input" id="f-vacancy" placeholder="1.2" step="0.1">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Distance to CBD (km)</label>
+          <input type="number" class="form-input" id="f-cbd" placeholder="35">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Notes</label>
+          <textarea class="form-textarea" id="f-notes" placeholder="Key observations, agent insights, inspection notes..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COL: INFRASTRUCTURE SCORING -->
+    <div>
+      <div class="card section">
+        <div class="card-title">Layer 1 — State policy anchors <span class="tag">Weight: 20pts</span></div>
+
+        <div class="form-group">
+          <label class="form-label">WA State Infrastructure Programme — project within 5km?</label>
+          <select class="form-select" id="s-sip" onchange="updateScore()">
+            <option value="0">No identified project</option>
+            <option value="5">Planned project (announced, unfunded)</option>
+            <option value="10">Committed project (funded, in pipeline)</option>
+            <option value="20">Active / recently completed major project</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">WAPC Metropolitan Region Scheme designation</label>
+          <select class="form-select" id="s-wapc" onchange="updateScore()">
+            <option value="0">No special designation</option>
+            <option value="5">District centre / corridor</option>
+            <option value="10">Major activity centre</option>
+            <option value="15">Strategic metropolitan centre</option>
+            <option value="20">Strategic metro centre + MRS rezoning active</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="card section">
+        <div class="card-title">Layer 2 — Transit-oriented development <span class="tag">Weight: 25pts</span></div>
+
+        <div class="form-group">
+          <label class="form-label">Proximity to completed/committed rail station</label>
+          <select class="form-select" id="s-rail" onchange="updateScore()">
+            <option value="0">No rail station within 2km</option>
+            <option value="8">Station within 800m–2km (existing)</option>
+            <option value="15">Within 800m of existing station</option>
+            <option value="20">Within 800m of new/upgraded Metronet station</option>
+            <option value="25">Declared TOD precinct (state-designated)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">East-west connectivity (cross-line access)</label>
+          <select class="form-select" id="s-connectivity" onchange="updateScore()">
+            <option value="0">Radial line only (CBD access)</option>
+            <option value="3">Connecting bus interchange</option>
+            <option value="5">Cross-line rail access (e.g. Thornlie–Cockburn link)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="card section">
+        <div class="card-title">Layer 3 — DevelopmentWA &amp; regeneration <span class="tag">Weight: 20pts</span></div>
+
+        <div class="form-group">
+          <label class="form-label">DevelopmentWA redevelopment area status</label>
+          <select class="form-select" id="s-devwa" onchange="updateScore()">
+            <option value="0">Not a redevelopment area</option>
+            <option value="8">Adjacent to redevelopment area</option>
+            <option value="14">Within declared redevelopment area</option>
+            <option value="20">Active regeneration — public investment confirmed</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Perth City Deal / major precinct investment</label>
+          <select class="form-select" id="s-citydeal" onchange="updateScore()">
+            <option value="0">No city deal investment nearby</option>
+            <option value="5">Adjacent to city deal project area</option>
+            <option value="10">Within city deal project zone</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="card section">
+        <div class="card-title">Layer 4 — Supply constraint <span class="tag">Weight: 20pts</span></div>
+
+        <div class="form-group">
+          <label class="form-label">Suburb type</label>
+          <select class="form-select" id="s-supply-type" onchange="updateScore()">
+            <option value="0">Greenfield / masterplanned estate</option>
+            <option value="5">Outer ring established</option>
+            <option value="10">Middle ring established</option>
+            <option value="15">Inner established (limited new supply)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Vacancy rate</label>
+          <select class="form-select" id="s-vacancy-score" onchange="updateScore()">
+            <option value="0">Above 4% — oversupply risk</option>
+            <option value="2">3–4% — elevated</option>
+            <option value="3">2–3% — balanced</option>
+            <option value="5">Below 2% — tight</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="card section">
+        <div class="card-title">Layer 5 — Employment diversity <span class="tag">Weight: 15pts</span></div>
+
+        <div class="form-group">
+          <label class="form-label">Number of employment anchors within 5km</label>
+          <select class="form-select" id="s-employment" onchange="updateScore()">
+            <option value="0">Single employer / residential only</option>
+            <option value="5">2 anchors (e.g. retail + industrial)</option>
+            <option value="10">3 anchors (e.g. health + retail + government)</option>
+            <option value="15">4+ anchors (health, retail, govt, education, logistics)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- LIVE SCORE -->
+      <div class="card" style="border-color: rgba(200,240,96,0.3);">
+        <div class="card-title">Infrastructure score</div>
+        <div style="display:flex;align-items:center;gap:2rem;padding:8px 0;">
+          <div>
+            <div style="font-family:var(--font-display);font-size:48px;font-weight:700;line-height:1;" id="live-score">0</div>
+            <div style="font-size:12px;color:var(--muted);">out of 100</div>
+          </div>
+          <div style="flex:1;">
+            <div class="radar-scores" id="score-breakdown">
+              <div class="radar-item"><div class="radar-label">Policy anchors</div><div class="radar-bar"><div class="radar-fill" id="rb-1" style="width:0%;background:var(--accent)"></div></div></div>
+              <div class="radar-item"><div class="radar-label">TOD / Rail</div><div class="radar-bar"><div class="radar-fill" id="rb-2" style="width:0%;background:var(--accent2)"></div></div></div>
+              <div class="radar-item"><div class="radar-label">DevelopmentWA</div><div class="radar-bar"><div class="radar-fill" id="rb-3" style="width:0%;background:var(--accent3)"></div></div></div>
+              <div class="radar-item"><div class="radar-label">Supply</div><div class="radar-bar"><div class="radar-fill" id="rb-4" style="width:0%;background:var(--warn)"></div></div></div>
+              <div class="radar-item"><div class="radar-label">Employment</div><div class="radar-bar"><div class="radar-fill" id="rb-5" style="width:0%;background:var(--success)"></div></div></div>
+            </div>
+          </div>
+          <div id="score-badge-wrap"></div>
+        </div>
+        <div id="score-recommendation" style="font-size:12px;color:var(--muted);padding-top:8px;border-top:1px solid var(--border);margin-top:8px;"></div>
+      </div>
+
+      <div style="display:flex;gap:8px;margin-top:12px;">
+        <button class="btn btn-primary" style="flex:1;" onclick="saveProperty()">Save property</button>
+        <button class="btn" onclick="clearForm()">Clear</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PROPERTIES LIST -->
+<div class="page" id="page-properties">
+  <div class="page-header">
+    <div class="page-title">Property tracker</div>
+    <div class="page-sub">All researched properties, scored against the infrastructure framework</div>
+  </div>
+
+  <div class="card section">
+    <div style="display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap;">
+      <input type="text" class="form-input" id="search-input" placeholder="Search suburb, state..." style="max-width:240px;" oninput="renderPropertiesTable()">
+      <select class="form-select" id="filter-state" style="max-width:160px;" onchange="renderPropertiesTable()">
+        <option value="">All states</option>
+        <option value="WA">Western Australia</option>
+        <option value="VIC">Victoria</option>
+      </select>
+      <select class="form-select" id="filter-status" style="max-width:180px;" onchange="renderPropertiesTable()">
+        <option value="">All statuses</option>
+        <option value="shortlisted">Shortlisted</option>
+        <option value="watching">Watching</option>
+        <option value="passed">Passed</option>
+      </select>
+    </div>
+    <div style="overflow-x:auto;">
+      <table class="prop-table">
+        <thead>
+          <tr>
+            <th>Suburb</th>
+            <th>State</th>
+            <th>Type</th>
+            <th>Median</th>
+            <th>Growth</th>
+            <th>Yield</th>
+            <th>Vacancy</th>
+            <th>Infra score</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="properties-tbody">
+          <tr>
+            <td colspan="10">
+              <div class="empty-state">
+                <div class="empty-state-icon">⬡</div>
+                <div class="empty-state-title">No properties yet</div>
+                <div class="empty-state-sub">Add your first property to start tracking</div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ANALYTICS -->
+<div class="page" id="page-analytics">
+  <div class="page-header">
+    <div class="page-title">Portfolio analytics</div>
+    <div class="page-sub">Framework performance, score distribution, and market comparison</div>
+  </div>
+
+  <div class="grid-3 section">
+    <div class="card">
+      <div class="card-title">Filter pass rates</div>
+      <div id="filter-pass-rates">
+        <div class="empty-state" style="padding:1rem;"><div class="empty-state-sub">Add properties to see pass rates</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Score by market</div>
+      <div id="score-by-market">
+        <div class="empty-state" style="padding:1rem;"><div class="empty-state-sub">Add properties to compare markets</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Growth vs infra score</div>
+      <div id="growth-vs-score">
+        <div class="empty-state" style="padding:1rem;"><div class="empty-state-sub">Requires 3+ properties</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card section">
+    <div class="card-title">Score breakdown — all properties</div>
+    <div id="score-breakdown-table">
+      <div class="empty-state"><div class="empty-state-sub">No properties tracked yet</div></div>
+    </div>
+  </div>
+
+  <div class="card section">
+    <div class="card-title">Framework calibration notes</div>
+    <div class="notes-block">
+      The infrastructure score weights are calibrated for a <strong>capital growth / rentvesting strategy</strong> with a 5–10 year hold. TOD/rail proximity (25pts) is the dominant driver — completed Metronet infrastructure is a permanent repricing catalyst. Policy anchors (20pts) reflect state government intent — Strategic Metropolitan Centre designation means state overrides local council on zoning. Supply constraint and employment diversity act as defensive factors preventing downside. If you're targeting a <strong>yield-first</strong> strategy, consider reweighting the framework — vacancy rate and gross yield become more important than rail proximity.
+    </div>
+  </div>
+</div>
+
+<!-- FRAMEWORK -->
+<div class="page" id="page-framework">
+  <div class="page-header">
+    <div class="page-title">Infrastructure-led framework</div>
+    <div class="page-sub">Five-layer decision filter — applied to every acquisition before shortlisting</div>
+  </div>
+
+  <div class="grid-2">
+    <div>
+      <div class="card section">
+        <div class="card-title">How the framework works</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:1rem;">
+          Each property is scored across five layers totalling 100 points. A score of 70+ is a strong buy signal. 50–69 warrants further investigation. Below 50 is a pass for a capital growth strategy.
+        </div>
+        <div>
+          <div class="check-item">
+            <div class="check-num" style="background:rgba(200,240,96,0.15);color:var(--accent);">1</div>
+            <div class="check-body">
+              <div class="check-label">State policy anchors <span class="tag">20 pts</span></div>
+              <div class="check-desc">WA State Infrastructure Programme projects within 5km. WAPC Metropolitan Region Scheme designation — Strategic Metropolitan Centre is tier 1.</div>
+            </div>
+          </div>
+          <div class="check-item">
+            <div class="check-num" style="background:rgba(96,200,240,0.15);color:var(--accent2);">2</div>
+            <div class="check-body">
+              <div class="check-label">Transit-oriented development <span class="tag">25 pts</span></div>
+              <div class="check-desc">Proximity to completed or committed rail station within 800m. Declared TOD precinct status adds the maximum points. Cross-line connectivity (east-west access) as a secondary signal.</div>
+            </div>
+          </div>
+          <div class="check-item">
+            <div class="check-num" style="background:rgba(240,96,168,0.15);color:var(--accent3);">3</div>
+            <div class="check-body">
+              <div class="check-label">DevelopmentWA regeneration <span class="tag">20 pts</span></div>
+              <div class="check-desc">Active DevelopmentWA redevelopment area means state capital is being deployed to raise amenity, attract private investment, and improve public realm — directly flowing into surrounding values.</div>
+            </div>
+          </div>
+          <div class="check-item">
+            <div class="check-num" style="background:rgba(240,168,96,0.15);color:var(--warn);">4</div>
+            <div class="check-body">
+              <div class="check-label">Supply constraint <span class="tag">20 pts</span></div>
+              <div class="check-desc">Established suburb with limited new supply pipeline. Vacancy rate below 2% signals tight rental demand. Greenfield estates fail this layer — competing with adjacent new stock every year.</div>
+            </div>
+          </div>
+          <div class="check-item">
+            <div class="check-num" style="background:rgba(96,212,160,0.15);color:var(--success);">5</div>
+            <div class="check-body">
+              <div class="check-label">Employment diversity <span class="tag">15 pts</span></div>
+              <div class="check-desc">4+ distinct employment anchors within 5km (health, retail, government, education, logistics). Single-employer suburbs are fragile — industry downturns directly hit property demand.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card section">
+        <div class="card-title">Score interpretation</div>
+        <div style="display:flex;flex-direction:column;gap:10px;padding-top:4px;">
+          <div style="display:flex;align-items:center;gap:12px;padding:12px;background:rgba(96,212,160,0.07);border-radius:8px;border:1px solid rgba(96,212,160,0.2);">
+            <div style="font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--success);min-width:50px;">70+</div>
+            <div><div style="font-weight:500;margin-bottom:2px;">Strong buy signal</div><div style="font-size:12px;color:var(--muted);">Multiple infrastructure catalysts stacked. Perception discount likely still present. Proceed to due diligence and buyer's agent engagement.</div></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:12px;background:rgba(240,168,96,0.07);border-radius:8px;border:1px solid rgba(240,168,96,0.2);">
+            <div style="font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--warn);min-width:50px;">50–69</div>
+            <div><div style="font-weight:500;margin-bottom:2px;">Watch &amp; investigate</div><div style="font-size:12px;color:var(--muted);">Some infrastructure signals present. Check which layers are scoring low and assess whether a specific catalyst is incoming. Good for yield-focused strategy.</div></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:12px;background:rgba(240,96,96,0.07);border-radius:8px;border:1px solid rgba(240,96,96,0.2);">
+            <div style="font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--danger);min-width:50px;">&lt;50</div>
+            <div><div style="font-weight:500;margin-bottom:2px;">Pass — for growth strategy</div><div style="font-size:12px;color:var(--muted);">Insufficient infrastructure catalysts for a capital growth mandate. May still suit a cashflow or owner-occupier play. Do not shortlist for rentvesting.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card section">
+        <div class="card-title">Key disqualifiers (auto-fail conditions)</div>
+        <div style="display:flex;flex-direction:column;gap:8px;padding-top:4px;">
+          <div style="display:flex;gap:10px;align-items:flex-start;">
+            <span class="badge badge-stop">FAIL</span>
+            <span style="font-size:13px;">Greenfield / masterplanned estate — new supply pipeline disqualifies capital growth thesis</span>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;">
+            <span class="badge badge-stop">FAIL</span>
+            <span style="font-size:13px;">Vacancy above 5% — rental demand is insufficient to support price growth</span>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;">
+            <span class="badge badge-stop">FAIL</span>
+            <span style="font-size:13px;">Single employer anchor — fragile demand base, exposed to industry cycle</span>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;">
+            <span class="badge badge-warn">WATCH</span>
+            <span style="font-size:13px;">Rail station planned but unfunded — treat as speculative, not confirmed catalyst</span>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;">
+            <span class="badge badge-warn">WATCH</span>
+            <span style="font-size:13px;">No WAPC designation above district level — lower planning uplift potential</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SOURCES -->
+<div class="page" id="page-sources">
+  <div class="page-header">
+    <div class="page-title">Research sources</div>
+    <div class="page-sub">Primary sources — check quarterly. Bookmark these for your regular research cadence.</div>
+  </div>
+
+  <div class="grid-2">
+    <div>
+      <div class="card section">
+        <div class="card-title">WA government &amp; planning</div>
+        <div style="display:flex;flex-direction:column;gap:1px;">
+          <a href="https://www.wa.gov.au/service/government-financial-management/procurement/pipeline-of-works" target="_blank" style="display:flex;flex-direction:column;padding:12px 0;border-bottom:1px solid var(--border);text-decoration:none;color:inherit;">
+            <span style="font-size:13px;font-weight:500;color:var(--accent2);">WA Infrastructure Pipeline</span>
+            <span style="font-size:12px;color:var(--muted);">Updated biannually. All approved state government projects by sector. Filter for transport, health, education.</span>
+          </a>
+          <a href="https://www.planning.wa.gov.au/wapc" target="_blank" style="display:flex;flex-direction:column;padding:12px 0;border-bottom:1px solid var(--border);text-decoration:none;color:inherit;">
+            <span style="font-size:13px;font-weight:500;color:var(--accent2);">WAPC — Planning Commission</span>
+            <span style="font-size:12px;color:var(--muted);">Strategic plan 2025–29, MRS designations, TOD precinct declarations, activity centre hierarchy.</span>
+          </a>
+          <a href="https://developmentwa.com.au/projects" target="_blank" style="display:flex;flex-direction:column;padding:12px 0;border-bottom:1px solid var(--border);text-decoration:none;color:inherit;">
+            <span style="font-size:13px;font-weight:500;color:var(--accent2);">DevelopmentWA Projects</span>
+            <span style="font-size:12px;color:var(--muted);">Five active redevelopment areas: Central Perth, Subiaco, Midland, Armadale, Scarborough. Check for new precinct announcements.</span>
+          </a>
+          <a href="https://www.metronet.wa.gov.au" target="_blank" style="display:flex;flex-direction:column;padding:12px 0;border-bottom:1px solid var(--border);text-decoration:none;color:inherit;">
+            <span style="font-size:13px;font-weight:500;color:var(--accent2);">Metronet</span>
+            <span style="font-size:12px;color:var(--muted);">Program complete Feb 2026. Monitor for any new phase announcements and station precinct improvement plans.</span>
+          </a>
+          <a href="https://www.ourstatebudget.wa.gov.au" target="_blank" style="display:flex;flex-direction:column;padding:12px 0;text-decoration:none;color:inherit;">
+            <span style="font-size:13px;font-weight:500;color:var(--accent2);">WA State Budget</span>
+            <span style="font-size:12px;color:var(--muted);">Annual. $10.3B regional infrastructure pipeline over 4 years in 2025–26 budget. New project announcements here first.</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="card section">
+        <div class="card-title">Federal</div>
+        <div style="display:flex;flex-direction:column;gap:1px;">
+          <a href="https://www.infrastructureaustralia.gov.au" target="_blank" style="display:flex;flex-direction:column;padding:12px 0;border-bottom:1px solid var(--border);text-decoration:none;color:inherit;">
+            <span style="font-size:13px;font-weight:500;color:var(--accent2);">Infrastructure Australia</span>
+            <span style="font-size:12px;color:var(--muted);">2026 Priority List — medium (2–4yr) and long (5–10yr) pipelines. Federal funding commitment = low delivery risk.</span>
+          </a>
+          <a href="https://www.infrastructure.gov.au" target="_blank" style="display:flex;flex-direction:column;padding:12px 0;text-decoration:none;color:inherit;">
+            <span style="font-size:13px;font-weight:500;color:var(--accent2);">Department of Infrastructure</span>
+            <span style="font-size:12px;color:var(--muted);">Project approvals and media releases on jointly funded state/federal projects.</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card section">
+        <div class="card-title">Market data</div>
+        <div style="display:flex;flex-direction:column;gap:1px;">
+          <a href="https://www.reiwa.com.au/the-wa-market/market-data/" target="_blank" style="display:flex;flex-direction:column;padding:12px 0;border-bottom:1px solid var(--border);text-decoration:none;color:inherit;">
+            <span style="font-size:13px;font-weight:500;color:var(--accent2);">REIWA Market Data</span>
+            <span style="font-size:12px;color:var(--muted);">WA's authoritative market data source. Median prices, rental yields, days on market, suburb profiles. Free tier sufficient for shortlisting.</span>
+          </a>
+          <a href="https://sqmresearch.com.au/graph_vacancy.php" target="_blank" style="display:flex;flex-direction:column;padding:12px 0;border-bottom:1px solid var(--border);text-decoration:none;color:inherit;">
+            <span style="font-size:13px;font-weight:500;color:var(--accent2);">SQM Research — Vacancy Rates</span>
+            <span style="font-size:12px;color:var(--muted);">Suburb-level vacancy data, listing volumes, vendor discounting. Critical input before any investment purchase. Free tier available.</span>
+          </a>
+          <a href="https://www.corelogic.com.au/consumer" target="_blank" style="display:flex;flex-direction:column;padding:12px 0;border-bottom:1px solid var(--border);text-decoration:none;color:inherit;">
+            <span style="font-size:13px;font-weight:500;color:var(--accent2);">CoreLogic (Cotality) Consumer</span>
+            <span style="font-size:12px;color:var(--muted);">Free suburb reports with limited comparable sales. RP Data Professional from $149/month for full data access when buying.</span>
+          </a>
+          <a href="https://www.proptrack.com.au" target="_blank" style="display:flex;flex-direction:column;padding:12px 0;border-bottom:1px solid var(--border);text-decoration:none;color:inherit;">
+            <span style="font-size:13px;font-weight:500;color:var(--accent2);">PropTrack</span>
+            <span style="font-size:12px;color:var(--muted);">REA Group's analytics platform. Suburb demand scores, rental demand ratings, price estimates. Integrated into realestate.com.au.</span>
+          </a>
+          <a href="https://www.abs.gov.au/statistics/economy/price-indexes-and-inflation/residential-property-price-indexes-eight-capital-cities" target="_blank" style="display:flex;flex-direction:column;padding:12px 0;text-decoration:none;color:inherit;">
+            <span style="font-size:13px;font-weight:500;color:var(--accent2);">ABS Residential Property Price Index</span>
+            <span style="font-size:12px;color:var(--muted);">Quarterly. Capital city and regional breakdowns. Use for macro trend validation, not individual property decisions.</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="card section">
+        <div class="card-title">Research cadence</div>
+        <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--muted);">
+          <div style="display:flex;gap:12px;align-items:flex-start;">
+            <span class="badge badge-info" style="flex-shrink:0;">Quarterly</span>
+            <span>WA Infrastructure Pipeline updates, REIWA vacancy data, SQM listing volumes for target suburbs</span>
+          </div>
+          <div style="display:flex;gap:12px;align-items:flex-start;">
+            <span class="badge badge-info" style="flex-shrink:0;">Biannually</span>
+            <span>WA State Budget releases, WAPC MRS amendment gazettals, DevelopmentWA project status checks</span>
+          </div>
+          <div style="display:flex;gap:12px;align-items:flex-start;">
+            <span class="badge badge-warn" style="flex-shrink:0;">Pre-purchase</span>
+            <span>Full 5-layer framework score, CoreLogic RP Data comparable sales, building &amp; pest inspection, conveyancer contract review</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- INFRASTRUCTURE PROJECTS -->
+<div class="page" id="page-infrastructure">
+  <div class="page-header">
+    <div class="page-title">Infrastructure projects</div>
+    <div class="page-sub">Track WA and Victoria projects from state pipelines, WAPC, DevelopmentWA and federal sources. Link projects to suburbs to see which properties benefit.</div>
+  </div>
+
+  <div class="grid-2 section">
+    <!-- ADD PROJECT FORM -->
+    <div class="card">
+      <div class="card-title">Log a project</div>
+      <div class="form-group">
+        <label class="form-label">Project name</label>
+        <input type="text" class="form-input" id="ip-name" placeholder="e.g. Armadale Station TOD Precinct">
+      </div>
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label class="form-label">Source / agency</label>
+          <select class="form-select" id="ip-source">
+            <option value="WAPC">WAPC</option>
+            <option value="DevelopmentWA">DevelopmentWA</option>
+            <option value="Metronet">Metronet</option>
+            <option value="WA SIP">WA State Infrastructure Programme</option>
+            <option value="WA Budget">WA State Budget</option>
+            <option value="Infrastructure Australia">Infrastructure Australia</option>
+            <option value="Federal">Federal Government</option>
+            <option value="VIC Big Build">VIC Big Build</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select class="form-select" id="ip-category">
+            <option value="Rail / Transport">Rail / Transport</option>
+            <option value="TOD Precinct">TOD Precinct</option>
+            <option value="Activity Centre">Activity Centre</option>
+            <option value="Road / Freeway">Road / Freeway</option>
+            <option value="Health">Health</option>
+            <option value="Education">Education</option>
+            <option value="Urban Regeneration">Urban Regeneration</option>
+            <option value="Housing">Housing</option>
+            <option value="Employment / Industrial">Employment / Industrial</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label class="form-label">Delivery stage</label>
+          <select class="form-select" id="ip-stage">
+            <option value="Announced">Announced — unfunded</option>
+            <option value="Committed">Committed — funded</option>
+            <option value="Planning">Planning / EIS underway</option>
+            <option value="Procurement">Procurement / tender</option>
+            <option value="Construction">Under construction</option>
+            <option value="Complete">Complete / operational</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Investment value</label>
+          <select class="form-select" id="ip-value">
+            <option value="<$100M">Under $100M</option>
+            <option value="$100M–$500M">$100M – $500M</option>
+            <option value="$500M–$1B">$500M – $1B</option>
+            <option value="$1B–$5B">$1B – $5B</option>
+            <option value=">$5B">Over $5B</option>
+            <option value="Unknown">Unknown</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Suburbs / areas directly affected (comma separated)</label>
+        <input type="text" class="form-input" id="ip-suburbs" placeholder="e.g. Armadale, Gosnells, Kelmscott">
+      </div>
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label class="form-label">Expected completion</label>
+          <input type="text" class="form-input" id="ip-completion" placeholder="e.g. 2026, Q3 2027, TBC">
+        </div>
+        <div class="form-group">
+          <label class="form-label">State</label>
+          <select class="form-select" id="ip-state">
+            <option value="WA">Western Australia</option>
+            <option value="VIC">Victoria</option>
+            <option value="Both">Both / National</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Source URL (optional)</label>
+        <input type="text" class="form-input" id="ip-url" placeholder="https://...">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Notes</label>
+        <textarea class="form-textarea" id="ip-notes" placeholder="Key details, property impact assessment, timing risks..."></textarea>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-primary" style="flex:1;" onclick="saveProject()">Save project</button>
+        <button class="btn" onclick="clearProjectForm()">Clear</button>
+      </div>
+    </div>
+
+    <!-- QUICK-ADD KNOWN PROJECTS -->
+    <div>
+      <div class="card section">
+        <div class="card-title">Quick-add known WA projects</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:12px;">Pre-loaded from the WA State Infrastructure Programme, Metronet, and DevelopmentWA. Click to add to your tracker.</div>
+        <div id="quick-add-list" style="display:flex;flex-direction:column;gap:6px;max-height:340px;overflow-y:auto;"></div>
+      </div>
+
+      <div class="card section">
+        <div class="card-title">Project impact on your properties</div>
+        <div id="impact-panel">
+          <div class="empty-state" style="padding:1rem;">
+            <div class="empty-state-sub">Add projects and properties to see overlap analysis</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROJECTS TABLE -->
+  <div class="card section">
+    <div style="display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap;align-items:center;">
+      <div class="section-title" style="flex:1;">Tracked projects</div>
+      <input type="text" class="form-input" id="ip-search" placeholder="Search project, suburb..." style="max-width:220px;" oninput="renderProjectsTable()">
+      <select class="form-select" id="ip-filter-stage" style="max-width:180px;" onchange="renderProjectsTable()">
+        <option value="">All stages</option>
+        <option value="Announced">Announced</option>
+        <option value="Committed">Committed</option>
+        <option value="Planning">Planning</option>
+        <option value="Construction">Construction</option>
+        <option value="Complete">Complete</option>
+      </select>
+      <select class="form-select" id="ip-filter-cat" style="max-width:180px;" onchange="renderProjectsTable()">
+        <option value="">All categories</option>
+        <option value="Rail / Transport">Rail / Transport</option>
+        <option value="TOD Precinct">TOD Precinct</option>
+        <option value="Activity Centre">Activity Centre</option>
+        <option value="Urban Regeneration">Urban Regeneration</option>
+        <option value="Health">Health</option>
+        <option value="Education">Education</option>
+      </select>
+    </div>
+    <div style="overflow-x:auto;">
+      <table class="prop-table">
+        <thead>
+          <tr>
+            <th>Project</th>
+            <th>Category</th>
+            <th>Source</th>
+            <th>Stage</th>
+            <th>Value</th>
+            <th>Affected suburbs</th>
+            <th>Completion</th>
+            <th>State</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="projects-tbody">
+          <tr><td colspan="9"><div class="empty-state"><div class="empty-state-icon">⬡</div><div class="empty-state-title">No projects logged yet</div><div class="empty-state-sub">Use the form or quick-add panel to get started</div></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="modal-overlay" id="detail-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-title" id="modal-title">Property detail</div>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// DATA STORE
+// ============================================================
+let properties = JSON.parse(localStorage.getItem('portfolio_properties') || '[]');
+
+function saveToStorage() {
+  localStorage.setItem('portfolio_properties', JSON.stringify(properties));
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  const tabs = document.querySelectorAll('.nav-tab');
+  const names = ['dashboard','add','properties','analytics','infrastructure','framework','sources'];
+  const idx = names.indexOf(id);
+  if (idx >= 0) tabs[idx].classList.add('active');
+  if (id === 'dashboard') renderDashboard();
+  if (id === 'properties') renderPropertiesTable();
+  if (id === 'analytics') renderAnalytics();
+  if (id === 'infrastructure') initInfraPage();
+}
+
+// ============================================================
+// LIVE SCORE CALCULATOR
+// ============================================================
+function getFormScores() {
+  const sip = parseInt(document.getElementById('s-sip').value) || 0;
+  const wapc = parseInt(document.getElementById('s-wapc').value) || 0;
+  const rail = parseInt(document.getElementById('s-rail').value) || 0;
+  const conn = parseInt(document.getElementById('s-connectivity').value) || 0;
+  const devwa = parseInt(document.getElementById('s-devwa').value) || 0;
+  const city = parseInt(document.getElementById('s-citydeal').value) || 0;
+  const supplyType = parseInt(document.getElementById('s-supply-type').value) || 0;
+  const vacScore = parseInt(document.getElementById('s-vacancy-score').value) || 0;
+  const emp = parseInt(document.getElementById('s-employment').value) || 0;
+
+  const l1 = Math.min(sip + wapc, 20);
+  const l2 = Math.min(rail + conn, 25);
+  const l3 = Math.min(devwa + city, 20);
+  const l4 = Math.min(supplyType + vacScore, 20);
+  const l5 = Math.min(emp, 15);
+  const total = l1 + l2 + l3 + l4 + l5;
+
+  return { l1, l2, l3, l4, l5, total };
+}
+
+function updateScore() {
+  const { l1, l2, l3, l4, l5, total } = getFormScores();
+
+  document.getElementById('live-score').textContent = total;
+  document.getElementById('rb-1').style.width = (l1 / 20 * 100) + '%';
+  document.getElementById('rb-2').style.width = (l2 / 25 * 100) + '%';
+  document.getElementById('rb-3').style.width = (l3 / 20 * 100) + '%';
+  document.getElementById('rb-4').style.width = (l4 / 20 * 100) + '%';
+  document.getElementById('rb-5').style.width = (l5 / 15 * 100) + '%';
+
+  const badgeWrap = document.getElementById('score-badge-wrap');
+  const recEl = document.getElementById('score-recommendation');
+
+  if (total >= 70) {
+    badgeWrap.innerHTML = '<span class="badge badge-go" style="font-size:13px;padding:6px 14px;">Strong buy</span>';
+    recEl.textContent = 'Multiple infrastructure catalysts stack. Proceed to buyer\'s agent engagement and due diligence.';
+  } else if (total >= 50) {
+    badgeWrap.innerHTML = '<span class="badge badge-warn" style="font-size:13px;padding:6px 14px;">Watch</span>';
+    recEl.textContent = 'Some catalysts present. Identify which layers score low and assess whether incoming signals could lift the score.';
+  } else {
+    badgeWrap.innerHTML = '<span class="badge badge-stop" style="font-size:13px;padding:6px 14px;">Pass</span>';
+    recEl.textContent = 'Insufficient infrastructure signals for a capital growth strategy. Consider only for cashflow or owner-occupier purposes.';
+  }
+}
+
+// ============================================================
+// SAVE PROPERTY
+// ============================================================
+function saveProperty() {
+  const suburb = document.getElementById('f-suburb').value.trim();
+  if (!suburb) { alert('Please enter a suburb name.'); return; }
+
+  const scores = getFormScores();
+
+  const prop = {
+    id: Date.now(),
+    suburb,
+    state: document.getElementById('f-state').value,
+    price: parseFloat(document.getElementById('f-price').value) || 0,
+    type: document.getElementById('f-type').value,
+    growth: parseFloat(document.getElementById('f-growth').value) || 0,
+    yield: parseFloat(document.getElementById('f-yield').value) || 0,
+    vacancy: parseFloat(document.getElementById('f-vacancy').value) || 0,
+    cbd: parseFloat(document.getElementById('f-cbd').value) || 0,
+    notes: document.getElementById('f-notes').value.trim(),
+    scores,
+    status: scores.total >= 70 ? 'shortlisted' : scores.total >= 50 ? 'watching' : 'passed',
+    addedAt: new Date().toISOString()
+  };
+
+  properties.unshift(prop);
+  saveToStorage();
+  clearForm();
+  showPage('properties');
+}
+
+function clearForm() {
+  ['f-suburb','f-price','f-growth','f-yield','f-vacancy','f-cbd','f-notes'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  ['s-sip','s-wapc','s-rail','s-connectivity','s-devwa','s-citydeal','s-supply-type','s-vacancy-score','s-employment'].forEach(id => {
+    document.getElementById(id).value = '0';
+  });
+  updateScore();
+}
+
+// ============================================================
+// PROPERTIES TABLE
+// ============================================================
+function renderPropertiesTable() {
+  const search = (document.getElementById('search-input').value || '').toLowerCase();
+  const stateFilter = document.getElementById('filter-state').value;
+  const statusFilter = document.getElementById('filter-status').value;
+
+  let filtered = properties.filter(p => {
+    if (search && !p.suburb.toLowerCase().includes(search) && !p.state.toLowerCase().includes(search)) return false;
+    if (stateFilter && p.state !== stateFilter) return false;
+    if (statusFilter && p.status !== statusFilter) return false;
+    return true;
+  });
+
+  const tbody = document.getElementById('properties-tbody');
+  if (filtered.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="10"><div class="empty-state"><div class="empty-state-icon">⬡</div><div class="empty-state-title">No matching properties</div><div class="empty-state-sub">Try adjusting your filters</div></div></td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = filtered.map(p => {
+    const scoreClass = p.scores.total >= 70 ? 'score-high' : p.scores.total >= 50 ? 'score-mid' : 'score-low';
+    const statusBadge = p.status === 'shortlisted' ? 'badge-go' : p.status === 'watching' ? 'badge-warn' : 'badge-stop';
+    return `<tr>
+      <td><div class="prop-name">${p.suburb}</div></td>
+      <td><span class="tag">${p.state}</span></td>
+      <td style="color:var(--muted);font-size:12px;">${p.type}</td>
+      <td style="font-family:var(--font-mono);font-size:12px;">${p.price ? '$' + p.price.toLocaleString() : '—'}</td>
+      <td style="font-family:var(--font-mono);font-size:12px;color:${p.growth >= 8 ? 'var(--success)' : 'var(--text)'};">${p.growth ? p.growth.toFixed(1) + '%' : '—'}</td>
+      <td style="font-family:var(--font-mono);font-size:12px;">${p.yield ? p.yield.toFixed(1) + '%' : '—'}</td>
+      <td style="font-family:var(--font-mono);font-size:12px;color:${p.vacancy < 2 ? 'var(--success)' : p.vacancy > 4 ? 'var(--danger)' : 'var(--text)'};">${p.vacancy ? p.vacancy.toFixed(1) + '%' : '—'}</td>
+      <td><span class="score-pill ${scoreClass}">${p.scores.total}</span></td>
+      <td><span class="badge ${statusBadge}">${p.status}</span></td>
+      <td>
+        <div style="display:flex;gap:4px;">
+          <button class="action-btn" onclick="viewDetail(${p.id})">View</button>
+          <button class="action-btn" onclick="toggleStatus(${p.id})">Toggle</button>
+          <button class="action-btn delete" onclick="deleteProperty(${p.id})">Delete</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function toggleStatus(id) {
+  const p = properties.find(x => x.id === id);
+  if (!p) return;
+  const cycle = { shortlisted: 'watching', watching: 'passed', passed: 'shortlisted' };
+  p.status = cycle[p.status] || 'watching';
+  saveToStorage();
+  renderPropertiesTable();
+}
+
+function deleteProperty(id) {
+  if (!confirm('Remove this property from tracking?')) return;
+  properties = properties.filter(p => p.id !== id);
+  saveToStorage();
+  renderPropertiesTable();
+  renderDashboard();
+}
+
+// ============================================================
+// DETAIL MODAL
+// ============================================================
+function viewDetail(id) {
+  const p = properties.find(x => x.id === id);
+  if (!p) return;
+  document.getElementById('modal-title').textContent = p.suburb + ', ' + p.state;
+
+  const scoreClass = p.scores.total >= 70 ? 'score-high' : p.scores.total >= 50 ? 'score-mid' : 'score-low';
+
+  document.getElementById('modal-content').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:1.5rem;">
+      <div style="background:var(--surface2);border-radius:8px;padding:12px;">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">Infrastructure score</div>
+        <div style="font-family:var(--font-display);font-size:32px;font-weight:700;" class="${scoreClass}">${p.scores.total}</div>
+      </div>
+      <div style="background:var(--surface2);border-radius:8px;padding:12px;">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">Median price</div>
+        <div style="font-family:var(--font-display);font-size:18px;font-weight:700;">${p.price ? '$' + p.price.toLocaleString() : '—'}</div>
+      </div>
+      <div style="background:var(--surface2);border-radius:8px;padding:12px;">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">Annual growth</div>
+        <div style="font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--success);">${p.growth ? p.growth.toFixed(1) + '%' : '—'}</div>
+      </div>
+    </div>
+    <div style="margin-bottom:1rem;">
+      <div style="font-size:11px;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.05em;">Layer scores</div>
+      ${[
+        ['Policy anchors', p.scores.l1, 20, 'var(--accent)'],
+        ['TOD / Rail', p.scores.l2, 25, 'var(--accent2)'],
+        ['DevelopmentWA', p.scores.l3, 20, 'var(--accent3)'],
+        ['Supply constraint', p.scores.l4, 20, 'var(--warn)'],
+        ['Employment diversity', p.scores.l5, 15, 'var(--success)']
+      ].map(([name, val, max, color]) => `
+        <div class="filter-row">
+          <div class="filter-name">${name}</div>
+          <div class="filter-bar-wrap"><div class="filter-bar" style="width:${Math.round(val/max*100)}%;background:${color}"></div></div>
+          <div class="filter-score-num">${val}/${max}</div>
+          <div class="filter-pass ${val >= max*0.6 ? 'pass-yes' : val >= max*0.3 ? 'pass-warn' : 'pass-no'}">${val >= max*0.6 ? '✓' : val >= max*0.3 ? '~' : '✗'}</div>
+        </div>
+      `).join('')}
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem;">
+      <div style="font-size:13px;"><span style="color:var(--muted);">Type: </span>${p.type}</div>
+      <div style="font-size:13px;"><span style="color:var(--muted);">CBD distance: </span>${p.cbd ? p.cbd + 'km' : '—'}</div>
+      <div style="font-size:13px;"><span style="color:var(--muted);">Yield: </span>${p.yield ? p.yield.toFixed(1) + '%' : '—'}</div>
+      <div style="font-size:13px;"><span style="color:var(--muted);">Vacancy: </span>${p.vacancy ? p.vacancy.toFixed(1) + '%' : '—'}</div>
+    </div>
+    ${p.notes ? `<div class="notes-block">${p.notes}</div>` : ''}
+    <div style="font-size:11px;color:var(--muted);margin-top:1rem;">Added ${new Date(p.addedAt).toLocaleDateString('en-AU', {day:'numeric',month:'short',year:'numeric'})}</div>
+  `;
+  document.getElementById('detail-modal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('detail-modal').classList.remove('open');
+}
+
+document.getElementById('detail-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// ============================================================
+// DASHBOARD
+// ============================================================
+function renderDashboard() {
+  const total = properties.length;
+  document.getElementById('stat-total').textContent = total;
+
+  if (total === 0) {
+    document.getElementById('stat-infra-avg').textContent = '—';
+    document.getElementById('stat-shortlisted').textContent = '0';
+    document.getElementById('stat-shortlist-pct').textContent = '— % of tracked';
+    document.getElementById('stat-avg-price').textContent = '—';
+    return;
+  }
+
+  const avgScore = Math.round(properties.reduce((a, p) => a + p.scores.total, 0) / total);
+  document.getElementById('stat-infra-avg').textContent = avgScore;
+
+  const shortlisted = properties.filter(p => p.status === 'shortlisted').length;
+  document.getElementById('stat-shortlisted').textContent = shortlisted;
+  document.getElementById('stat-shortlist-pct').textContent = Math.round(shortlisted / total * 100) + '% of tracked';
+
+  const priced = properties.filter(p => p.price > 0);
+  if (priced.length > 0) {
+    const avgPrice = Math.round(priced.reduce((a, p) => a + p.price, 0) / priced.length);
+    document.getElementById('stat-avg-price').textContent = '$' + (avgPrice >= 1000000 ? (avgPrice/1000000).toFixed(2) + 'M' : (avgPrice/1000).toFixed(0) + 'k');
+  } else {
+    document.getElementById('stat-avg-price').textContent = '—';
+  }
+
+  // Score chart
+  const buckets = [0, 0, 0, 0, 0]; // <30, 30-49, 50-69, 70-84, 85+
+  properties.forEach(p => {
+    if (p.scores.total < 30) buckets[0]++;
+    else if (p.scores.total < 50) buckets[1]++;
+    else if (p.scores.total < 70) buckets[2]++;
+    else if (p.scores.total < 85) buckets[3]++;
+    else buckets[4]++;
+  });
+  const maxB = Math.max(...buckets, 1);
+  const colors = ['var(--danger)', 'rgba(240,96,96,0.5)', 'var(--warn)', 'var(--success)', 'var(--accent)'];
+  const labels = ['<30', '30–49', '50–69', '70–84', '85+'];
+  document.getElementById('score-chart').innerHTML = `
+    <div style="display:flex;align-items:flex-end;gap:8px;flex:1;height:140px;padding-bottom:24px;">
+      ${buckets.map((b, i) => `
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end;">
+          <div style="font-family:var(--font-mono);font-size:10px;color:var(--muted);">${b > 0 ? b : ''}</div>
+          <div style="width:100%;border-radius:3px 3px 0 0;background:${colors[i]};height:${b === 0 ? 2 : Math.max(8, b/maxB*110)}px;"></div>
+        </div>
+      `).join('')}
+    </div>
+    <div style="position:absolute;bottom:8px;left:12px;right:12px;display:flex;gap:8px;">
+      ${labels.map(l => `<div style="flex:1;text-align:center;font-size:10px;color:var(--muted);font-family:var(--font-mono);">${l}</div>`).join('')}
+    </div>
+  `;
+
+  // Market breakdown
+  const markets = {};
+  properties.forEach(p => {
+    if (!markets[p.state]) markets[p.state] = { count: 0, scores: [] };
+    markets[p.state].count++;
+    markets[p.state].scores.push(p.scores.total);
+  });
+  document.getElementById('market-breakdown').innerHTML = Object.entries(markets).map(([state, data]) => {
+    const avg = Math.round(data.scores.reduce((a, b) => a + b, 0) / data.scores.length);
+    return `<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);">
+      <span class="tag" style="min-width:36px;text-align:center;">${state}</span>
+      <span style="flex:1;font-size:13px;">${data.count} propert${data.count === 1 ? 'y' : 'ies'}</span>
+      <span style="font-family:var(--font-mono);font-size:13px;color:${avg >= 70 ? 'var(--success)' : avg >= 50 ? 'var(--warn)' : 'var(--muted)'};">avg ${avg}</span>
+    </div>`;
+  }).join('') || '<div class="empty-state" style="padding:1rem;"><div class="empty-state-sub">No data</div></div>';
+
+  // Top properties
+  const top = [...properties].sort((a, b) => b.scores.total - a.scores.total).slice(0, 5);
+  document.getElementById('top-properties').innerHTML = `
+    <table class="prop-table">
+      <thead><tr><th>Suburb</th><th>State</th><th>Median</th><th>Growth</th><th>Infra score</th><th>Status</th></tr></thead>
+      <tbody>${top.map(p => {
+        const sc = p.scores.total >= 70 ? 'score-high' : p.scores.total >= 50 ? 'score-mid' : 'score-low';
+        const sb = p.status === 'shortlisted' ? 'badge-go' : p.status === 'watching' ? 'badge-warn' : 'badge-stop';
+        return `<tr onclick="viewDetail(${p.id})" style="cursor:pointer;">
+          <td class="prop-name">${p.suburb}</td>
+          <td><span class="tag">${p.state}</span></td>
+          <td style="font-family:var(--font-mono);font-size:12px;">${p.price ? '$' + p.price.toLocaleString() : '—'}</td>
+          <td style="font-family:var(--font-mono);font-size:12px;color:${p.growth >= 8 ? 'var(--success)' : 'var(--text)'};">${p.growth ? p.growth.toFixed(1) + '%' : '—'}</td>
+          <td><span class="score-pill ${sc}">${p.scores.total}</span></td>
+          <td><span class="badge ${sb}">${p.status}</span></td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table>`;
+}
+
+// ============================================================
+// ANALYTICS
+// ============================================================
+function renderAnalytics() {
+  if (properties.length === 0) return;
+
+  // Filter pass rates (what % score >50% on each layer)
+  const layers = [
+    { name: 'Policy anchors', max: 20, key: 'l1' },
+    { name: 'TOD / Rail', max: 25, key: 'l2' },
+    { name: 'DevelopmentWA', max: 20, key: 'l3' },
+    { name: 'Supply constraint', max: 20, key: 'l4' },
+    { name: 'Employment diversity', max: 15, key: 'l5' }
+  ];
+  const colors = ['var(--accent)', 'var(--accent2)', 'var(--accent3)', 'var(--warn)', 'var(--success)'];
+
+  document.getElementById('filter-pass-rates').innerHTML = layers.map((l, i) => {
+    const passing = properties.filter(p => p.scores[l.key] >= l.max * 0.5).length;
+    const pct = Math.round(passing / properties.length * 100);
+    return `<div class="filter-row">
+      <div class="filter-name" style="font-size:12px;">${l.name}</div>
+      <div class="filter-bar-wrap" style="width:80px;"><div class="filter-bar" style="width:${pct}%;background:${colors[i]};"></div></div>
+      <div class="filter-score-num">${pct}%</div>
+    </div>`;
+  }).join('');
+
+  // Score by market
+  const markets = {};
+  properties.forEach(p => {
+    if (!markets[p.state]) markets[p.state] = [];
+    markets[p.state].push(p.scores.total);
+  });
+  document.getElementById('score-by-market').innerHTML = Object.entries(markets).map(([state, scores]) => {
+    const avg = Math.round(scores.reduce((a, b) => a + b) / scores.length);
+    const min = Math.min(...scores);
+    const max = Math.max(...scores);
+    return `<div style="padding:10px 0;border-bottom:1px solid var(--border);">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <span style="font-weight:500;font-size:13px;">${state}</span>
+        <span style="font-family:var(--font-mono);font-size:13px;color:${avg >= 70 ? 'var(--success)' : avg >= 50 ? 'var(--warn)' : 'var(--danger)'};">avg ${avg}</span>
+      </div>
+      <div style="font-size:11px;color:var(--muted);">${scores.length} tracked · range ${min}–${max}</div>
+    </div>`;
+  }).join('') || '<div class="empty-state" style="padding:1rem;"><div class="empty-state-sub">No data</div></div>';
+
+  // Growth vs score scatter (simplified)
+  const withGrowth = properties.filter(p => p.growth > 0);
+  if (withGrowth.length >= 2) {
+    const maxG = Math.max(...withGrowth.map(p => p.growth));
+    document.getElementById('growth-vs-score').innerHTML = `
+      <div style="position:relative;height:140px;background:var(--surface2);border-radius:8px;overflow:hidden;margin-bottom:8px;">
+        ${withGrowth.map(p => {
+          const x = (p.scores.total / 100 * 85) + 5;
+          const y = 90 - (p.growth / maxG * 80);
+          const c = p.scores.total >= 70 ? 'var(--success)' : p.scores.total >= 50 ? 'var(--warn)' : 'var(--danger)';
+          return `<div title="${p.suburb}: score ${p.scores.total}, growth ${p.growth}%" style="position:absolute;left:${x}%;top:${y}px;width:8px;height:8px;border-radius:50%;background:${c};transform:translate(-50%,-50%);"></div>`;
+        }).join('')}
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);">
+        <span>← Low infra score</span><span>High infra score →</span>
+      </div>`;
+  } else {
+    document.getElementById('growth-vs-score').innerHTML = '<div class="empty-state" style="padding:1rem;"><div class="empty-state-sub">Add 2+ properties with growth data</div></div>';
+  }
+
+  // Score breakdown table
+  const sorted = [...properties].sort((a, b) => b.scores.total - a.scores.total);
+  document.getElementById('score-breakdown-table').innerHTML = `
+    <table class="prop-table">
+      <thead><tr><th>Suburb</th><th>Total</th><th>Policy (20)</th><th>TOD (25)</th><th>DevWA (20)</th><th>Supply (20)</th><th>Employ (15)</th></tr></thead>
+      <tbody>${sorted.map(p => {
+        const sc = p.scores.total >= 70 ? 'score-high' : p.scores.total >= 50 ? 'score-mid' : 'score-low';
+        return `<tr>
+          <td><span class="prop-name">${p.suburb}</span> <span class="tag">${p.state}</span></td>
+          <td><span class="score-pill ${sc}">${p.scores.total}</span></td>
+          <td style="font-family:var(--font-mono);font-size:12px;">${p.scores.l1}/20</td>
+          <td style="font-family:var(--font-mono);font-size:12px;">${p.scores.l2}/25</td>
+          <td style="font-family:var(--font-mono);font-size:12px;">${p.scores.l3}/20</td>
+          <td style="font-family:var(--font-mono);font-size:12px;">${p.scores.l4}/20</td>
+          <td style="font-family:var(--font-mono);font-size:12px;">${p.scores.l5}/15</td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table>`;
+}
+
+// ============================================================
+// EXPORT / IMPORT
+// ============================================================
+function exportData() {
+  const blob = new Blob([JSON.stringify({ properties, projects, exportedAt: new Date().toISOString() }, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'portfolio-research-' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+}
+
+function importData() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.json';
+  input.onchange = e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try {
+        const data = JSON.parse(ev.target.result);
+        if (data.properties && Array.isArray(data.properties)) {
+          properties = data.properties;
+          saveToStorage();
+        }
+        if (data.projects && Array.isArray(data.projects)) {
+          projects = data.projects;
+          saveProjects();
+        }
+        renderDashboard();
+        alert('Imported ' + properties.length + ' properties and ' + (projects ? projects.length : 0) + ' projects.');
+      } catch { alert('Could not parse JSON file.'); }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+// ============================================================
+// INFRASTRUCTURE PROJECTS DATA STORE
+// ============================================================
+let projects = JSON.parse(localStorage.getItem('portfolio_projects') || '[]');
+
+function saveProjects() {
+  localStorage.setItem('portfolio_projects', JSON.stringify(projects));
+}
+
+// Pre-loaded known WA projects
+const KNOWN_PROJECTS = [
+  { name: 'Armadale Station TOD Precinct', source: 'WAPC', category: 'TOD Precinct', stage: 'Planning', value: '$100M–$500M', suburbs: 'Armadale', completion: '2027–2028', state: 'WA', url: 'https://www.planning.wa.gov.au', notes: 'State-declared TOD precinct. State overrides council on zoning within 800m of Armadale Station. Planning underway 2025.' },
+  { name: 'Cannington Strategic Metropolitan Centre — Regeneration', source: 'DevelopmentWA', category: 'Urban Regeneration', stage: 'Construction', value: '$1B–$5B', suburbs: 'Cannington, East Cannington', completion: 'Ongoing', state: 'WA', url: 'https://developmentwa.com.au', notes: '$1.6B private investment attracted since 2017. Activity Centre Plan for 10,000 new dwellings and population of 25,000. Westfield Carousel expansion underway.' },
+  { name: 'Midland Redevelopment — New Station + Bellevue Facility', source: 'DevelopmentWA', category: 'Urban Regeneration', stage: 'Complete', value: '$500M–$1B', suburbs: 'Midland, Bellevue', completion: 'Feb 2026', state: 'WA', url: 'https://developmentwa.com.au', notes: 'New Midland Station opened Feb 2026 (800+ bay carpark, 12-stand bus interchange). Bellevue Railcar Manufacturing Facility brings significant new employment.' },
+  { name: 'Armadale Line + Byford Rail Extension', source: 'Metronet', category: 'Rail / Transport', stage: 'Complete', value: '$1B–$5B', suburbs: 'Armadale, Byford, Gosnells, Kelmscott, Maddington, Cannington, Beckenham', completion: 'Oct 2025', state: 'WA', url: 'https://www.metronet.wa.gov.au', notes: 'Elevated inner Armadale Line + 8km Byford extension. Removed 9 level crossings. New stations: Carlisle, Oats St, Queens Park, Cannington, Beckenham, Armadale, Byford. Long Park (7km linear parkland) beneath elevated rail.' },
+  { name: 'Thornlie–Cockburn Link', source: 'Metronet', category: 'Rail / Transport', stage: 'Complete', value: '$1B–$5B', suburbs: 'Thornlie, Nicholson Road, Ranford Road, Canning Vale', completion: 'Jun 2025', state: 'WA', url: 'https://www.metronet.wa.gov.au', notes: "Perth's first east-west rail connection linking Mandurah and Armadale lines. 17km. 27-min CBD journey from Nicholson Rd. Cross-city access for Armadale corridor for first time." },
+  { name: 'Morley–Ellenbrook Line', source: 'Metronet', category: 'Rail / Transport', stage: 'Complete', value: '$1B–$5B', suburbs: 'Ellenbrook, Whiteman Park, Malaga, Noranda, Morley, Bayswater', completion: '2024', state: 'WA', url: 'https://www.metronet.wa.gov.au', notes: '21km new line, 5 new stations. Ended Ellenbrook\'s 16-year wait for rail. Bayswater Station upgraded as interchange.' },
+  { name: 'Yanchep Rail Extension', source: 'Metronet', category: 'Rail / Transport', stage: 'Complete', value: '$500M–$1B', suburbs: 'Yanchep, Alkimos, Eglinton', completion: 'Jul 2024', state: 'WA', url: 'https://www.metronet.wa.gov.au', notes: 'Northern corridor extension serving one of Perth\'s fastest-growing residential areas.' },
+  { name: 'Armadale Redevelopment Area', source: 'DevelopmentWA', category: 'Urban Regeneration', stage: 'Construction', value: '$100M–$500M', suburbs: 'Armadale', completion: 'Ongoing', state: 'WA', url: 'https://developmentwa.com.au', notes: 'Active DevelopmentWA redevelopment area. New elevated station, $4.5M Lotterywest grant for station parklands. Long-term urban transformation alongside Metronet delivery.' },
+  { name: 'Perth City Deal — Cultural Centre + Concert Hall', source: 'Federal', category: 'Urban Regeneration', stage: 'Construction', value: '$1B–$5B', suburbs: 'Perth CBD, Northbridge', completion: '2026–2027', state: 'WA', url: 'https://perth.wa.gov.au', notes: '$1.7B Perth City Deal. $150.3M for Concert Hall redevelopment, $55M for Perth Cultural Centre rejuvenation. ECU City Campus opening 2026 — 10,000 students.' },
+  { name: 'ECU Perth City Campus', source: 'Other', category: 'Education', stage: 'Complete', value: '$500M–$1B', suburbs: 'Perth CBD, Northbridge', completion: '2026', state: 'WA', url: 'https://www.ecu.edu.au', notes: 'Edith Cowan University city campus opens 2026. 10,000+ students and staff. Located at Perth City Link adjacent to Perth Station. Major student accommodation demand driver.' },
+  { name: 'Scarborough Beach Redevelopment', source: 'DevelopmentWA', category: 'Urban Regeneration', stage: 'Construction', value: '$100M–$500M', suburbs: 'Scarborough', completion: 'Ongoing', state: 'WA', url: 'https://developmentwa.com.au', notes: 'Active DevelopmentWA precinct. Coastal lifestyle premium area with active state investment in public realm and mixed-use development.' },
+  { name: 'WAPC TOD Precinct Declarations — 10 Stations', source: 'WAPC', category: 'TOD Precinct', stage: 'Planning', value: 'Unknown', suburbs: 'Multiple (10 station precincts TBC)', completion: '2026–2027', state: 'WA', url: 'https://www.planning.wa.gov.au', notes: 'WA Government declared 10 train station precincts in late 2025. State sets height and density within 800m radius — overrides local council. Specific stations to be gazetted progressively.' },
+  { name: 'Joondalup Strategic Metropolitan Centre', source: 'WAPC', category: 'Activity Centre', stage: 'Planning', value: '$100M–$500M', suburbs: 'Joondalup', completion: 'Ongoing', state: 'WA', url: 'https://www.planning.wa.gov.au', notes: 'One of Perth\'s 10 Strategic Metropolitan Centres. Bold CBD vision with mixed-use developments, public realm enhancements, and improved transport connectivity.' },
+  { name: 'Alkimos Seawater Desalination Plant', source: 'WA Budget', category: 'Other', stage: 'Construction', value: '$1B–$5B', suburbs: 'Alkimos, Northern Corridor', completion: '2028', state: 'WA', url: 'https://www.wa.gov.au', notes: '$1.1B investment. 50 billion litres annually initially. Creates 1,500 jobs + 170 apprenticeships. Supports northern growth corridor population expansion.' },
+  { name: "North East Link — Melbourne", source: 'VIC Big Build', category: 'Road / Freeway', stage: 'Construction', value: '>$5B', suburbs: 'Bulleen, Heidelberg, Doncaster', completion: '2028', state: 'VIC', url: 'https://northeastlink.vic.gov.au', notes: '6.5km tunnel. Removes 15,000 trucks from local roads daily. Cuts travel times up to 35 mins. Repricing impact on inner-northeast Melbourne suburbs.' },
+  { name: 'Suburban Rail Loop East — Melbourne', source: 'VIC Big Build', category: 'Rail / Transport', stage: 'Construction', value: '>$5B', suburbs: 'Cheltenham, Clayton, Monash, Glen Waverley, Burwood, Box Hill', completion: '2035', state: 'VIC', url: 'https://suburbanrailloop.vic.gov.au', notes: 'First segment Cheltenham to Box Hill. Tunnelling begins 2026. Major long-horizon catalyst for south-eastern Melbourne middle ring.' },
+];
+
+// ============================================================
+// INFRASTRUCTURE PAGE INIT
+// ============================================================
+function initInfraPage() {
+  renderQuickAdd();
+  renderProjectsTable();
+  renderImpactPanel();
+}
+
+function renderQuickAdd() {
+  const existing = projects.map(p => p.name);
+  const list = document.getElementById('quick-add-list');
+  list.innerHTML = KNOWN_PROJECTS.map((p, i) => {
+    const added = existing.includes(p.name);
+    const stageColor = { 'Complete': 'var(--success)', 'Construction': 'var(--accent)', 'Planning': 'var(--accent2)', 'Committed': 'var(--warn)', 'Announced': 'var(--muted)' }[p.stage] || 'var(--muted)';
+    return `<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);">
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.name}</div>
+        <div style="display:flex;gap:6px;margin-top:3px;flex-wrap:wrap;">
+          <span style="font-size:10px;color:${stageColor};">${p.stage}</span>
+          <span style="font-size:10px;color:var(--muted);">${p.category}</span>
+          <span style="font-size:10px;color:var(--muted);">${p.state}</span>
+        </div>
+      </div>
+      ${added
+        ? '<span style="font-size:11px;color:var(--muted);white-space:nowrap;">Added</span>'
+        : `<button class="action-btn" onclick="quickAdd(${i})" style="white-space:nowrap;">+ Add</button>`
+      }
+    </div>`;
+  }).join('');
+}
+
+function quickAdd(idx) {
+  const p = { ...KNOWN_PROJECTS[idx], id: Date.now(), addedAt: new Date().toISOString() };
+  projects.unshift(p);
+  saveProjects();
+  renderQuickAdd();
+  renderProjectsTable();
+  renderImpactPanel();
+}
+
+// ============================================================
+// SAVE / CLEAR PROJECT FORM
+// ============================================================
+function saveProject() {
+  const name = document.getElementById('ip-name').value.trim();
+  if (!name) { alert('Please enter a project name.'); return; }
+  const proj = {
+    id: Date.now(),
+    name,
+    source: document.getElementById('ip-source').value,
+    category: document.getElementById('ip-category').value,
+    stage: document.getElementById('ip-stage').value,
+    value: document.getElementById('ip-value').value,
+    suburbs: document.getElementById('ip-suburbs').value.trim(),
+    completion: document.getElementById('ip-completion').value.trim(),
+    state: document.getElementById('ip-state').value,
+    url: document.getElementById('ip-url').value.trim(),
+    notes: document.getElementById('ip-notes').value.trim(),
+    addedAt: new Date().toISOString()
+  };
+  projects.unshift(proj);
+  saveProjects();
+  clearProjectForm();
+  renderProjectsTable();
+  renderQuickAdd();
+  renderImpactPanel();
+}
+
+function clearProjectForm() {
+  ['ip-name','ip-suburbs','ip-completion','ip-url','ip-notes'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+}
+
+// ============================================================
+// PROJECTS TABLE
+// ============================================================
+function renderProjectsTable() {
+  const search = (document.getElementById('ip-search').value || '').toLowerCase();
+  const stageF = document.getElementById('ip-filter-stage').value;
+  const catF = document.getElementById('ip-filter-cat').value;
+
+  let filtered = projects.filter(p => {
+    if (search && !p.name.toLowerCase().includes(search) && !(p.suburbs||'').toLowerCase().includes(search)) return false;
+    if (stageF && p.stage !== stageF) return false;
+    if (catF && p.category !== catF) return false;
+    return true;
+  });
+
+  const tbody = document.getElementById('projects-tbody');
+  if (filtered.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="9"><div class="empty-state"><div class="empty-state-icon">⬡</div><div class="empty-state-title">No projects match</div><div class="empty-state-sub">Try adjusting filters or add a project above</div></div></td></tr>`;
+    return;
+  }
+
+  const stageColors = { 'Complete': 'badge-go', 'Construction': 'badge-info', 'Committed': 'badge-info', 'Planning': 'badge-warn', 'Procurement': 'badge-warn', 'Announced': 'badge-stop' };
+
+  tbody.innerHTML = filtered.map(p => `<tr>
+    <td>
+      <div style="font-weight:500;font-size:13px;">${p.name}</div>
+      ${p.url ? `<a href="${p.url}" target="_blank" style="font-size:11px;color:var(--accent2);text-decoration:none;">Source ↗</a>` : ''}
+    </td>
+    <td><span class="tag">${p.category}</span></td>
+    <td style="font-size:12px;color:var(--muted);">${p.source}</td>
+    <td><span class="badge ${stageColors[p.stage] || 'badge-warn'}">${p.stage}</span></td>
+    <td style="font-family:var(--font-mono);font-size:12px;">${p.value}</td>
+    <td style="font-size:12px;color:var(--muted);max-width:180px;">${p.suburbs || '—'}</td>
+    <td style="font-family:var(--font-mono);font-size:12px;">${p.completion || '—'}</td>
+    <td><span class="tag">${p.state}</span></td>
+    <td><div style="display:flex;gap:4px;">
+      ${p.url ? `<button class="action-btn" onclick="window.open('${p.url}','_blank')">Open ↗</button>` : ''}
+      <button class="action-btn delete" onclick="deleteProject(${p.id})">Delete</button>
+    </div></td>
+  </tr>`).join('');
+}
+
+function deleteProject(id) {
+  if (!confirm('Remove this project?')) return;
+  projects = projects.filter(p => p.id !== id);
+  saveProjects();
+  renderProjectsTable();
+  renderQuickAdd();
+  renderImpactPanel();
+}
+
+// ============================================================
+// IMPACT PANEL — match projects to tracked properties
+// ============================================================
+function renderImpactPanel() {
+  const panel = document.getElementById('impact-panel');
+  if (properties.length === 0 || projects.length === 0) {
+    panel.innerHTML = '<div class="empty-state" style="padding:1rem;"><div class="empty-state-sub">Add properties and projects to see overlap</div></div>';
+    return;
+  }
+
+  // For each property, find projects whose suburbs string contains the property's suburb
+  const matches = properties.map(prop => {
+    const matchedProjects = projects.filter(proj => {
+      const subs = (proj.suburbs || '').toLowerCase().split(',').map(s => s.trim());
+      return subs.some(s => s && prop.suburb.toLowerCase().includes(s) || (s && s.includes(prop.suburb.toLowerCase())));
+    });
+    return { prop, matchedProjects };
+  }).filter(m => m.matchedProjects.length > 0);
+
+  if (matches.length === 0) {
+    panel.innerHTML = '<div class="empty-state" style="padding:1rem;"><div class="empty-state-sub">No suburb overlaps found between tracked properties and projects yet</div></div>';
+    return;
+  }
+
+  const stageColors = { 'Complete': 'var(--success)', 'Construction': 'var(--accent)', 'Committed': 'var(--accent2)', 'Planning': 'var(--warn)', 'Announced': 'var(--muted)' };
+
+  panel.innerHTML = matches.map(({ prop, matchedProjects }) => `
+    <div style="padding:10px 0;border-bottom:1px solid var(--border);">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+        <span style="font-weight:500;font-size:13px;">${prop.suburb}</span>
+        <span class="tag">${prop.state}</span>
+        <span style="font-family:var(--font-mono);font-size:11px;color:${prop.scores.total >= 70 ? 'var(--success)' : prop.scores.total >= 50 ? 'var(--warn)' : 'var(--danger)'};">score ${prop.scores.total}</span>
+      </div>
+      ${matchedProjects.map(proj => `
+        <div style="display:flex;align-items:center;gap:8px;padding:4px 8px;background:var(--surface2);border-radius:6px;margin-bottom:4px;">
+          <div style="width:6px;height:6px;border-radius:50%;background:${stageColors[proj.stage] || 'var(--muted)'};flex-shrink:0;"></div>
+          <span style="font-size:12px;flex:1;">${proj.name}</span>
+          <span style="font-size:11px;color:${stageColors[proj.stage] || 'var(--muted)'};">${proj.stage}</span>
+        </div>
+      `).join('')}
+    </div>
+  `).join('') || '<div class="empty-state" style="padding:1rem;"><div class="empty-state-sub">No overlaps found</div></div>';
+}
+
+// ============================================================
+// INFRASTRUCTURE PROJECTS — INIT
+// ============================================================
+updateScore();
+renderDashboard();
+</script>
+</body>
+</html>
